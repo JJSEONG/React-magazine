@@ -13,11 +13,11 @@ const Header = () => {
           navigate("/")
         }}>JS Book</Logo>
         <div style={{ marginRight : "10px"}}>
-          <Btn>
+          <Btn onClick = {() => { navigate("/signup")}}>
             <FontAwesomeIcon icon={ faUserPlus } />
             <span>회원가입</span>
           </Btn>
-          <Btn>
+          <Btn onClick = {() => { navigate("/login")}}>
             <FontAwesomeIcon icon={ faArrowRightToBracket } />
             <span>로그인</span>
           </Btn>
@@ -72,6 +72,10 @@ const Btn = styled.button`
   cursor: pointer;
   span {
     margin-left: 6px;
+  }
+  &:hover {
+    box-shadow: 0 0 6px #AD85CD;
+    color: #464555;
   }
 `
 
