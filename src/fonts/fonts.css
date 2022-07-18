@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
+
+@font-face {
+  font-family: 'GmarketL';
+  src: url('./GmarketSansTTFLight.ttf');
+}
+
+@font-face {
+  font-family: 'GmarketM';
+  src: url('./GmarketSansTTFMedium.ttf');
+}
+
+@font-face {
+  font-family: 'GmarketB';
+  src: url('./GmarketSansTTFBold.ttf');
+}
