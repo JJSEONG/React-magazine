@@ -1,9 +1,41 @@
-import React from 'react'
-import styled from 'styled-components'
-import { useNavigate } from 'react-router-dom'
+import React from 'react';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
+import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "../shared/firebase";
+import { collection, addDoc } from "firebase/firestore";
 
 const SignUp = () => {
   const navigate = useNavigate();
+
+  const id_ref = React.useRef(null);
+  const name_ref = React.useRef(null);
+  const pw_ref = React.useRef(null);
+  const confirm_ref = React.useRef(null);
+
+  const signupFB = async (e) => {
+
+    e.preventDefault()
+
+    // if(id_ref.current.value === "") {
+    //   window.alert("값이 비었어!")  
+    // }
+
+    const user = await createUserWithEmailAndPassword(
+      auth,
+      id_ref.current.value,
+      pw_ref.current.value,
+      confirm_ref.current.value
+    );
+
+    console.log(user);
+
+    const user_data = await addDoc(collection(db, "users"), {
+      user_id: id_ref.current.value,
+      name: name_ref.current.value,
+    });
+    console.log(user_data.id);
+  }
 
   return (
     <Wrap>
@@ -11,26 +43,31 @@ const SignUp = () => {
         <Title>Sign-Up</Title>
         <form style={{width: "50%"}}>
           <Input>
-            <p>아이디</p>
-            <input type="text" maxLength={ 30 } placeholder="이메일 형식 아이디를 입력해주세요." />
+            <label>
+              <p>아이디</p>
+              <input ref={id_ref} type="text" maxLength={ 30 } placeholder="이메일 형식 아이디를 입력해주세요." />
+            </label>
           </Input>
           <Input>
-            <p>닉네임</p>
-            <input type="text" maxLength={ 8 } placeholder="닉네임을 입력해주세요." />
+            <label>
+              <p>닉네임</p>
+              <input ref={name_ref} type="text" maxLength={ 8 } placeholder="닉네임을 입력해주세요." /> 
+            </label>
           </Input>
           <Input>
-            <p>비밀번호</p>
-            <input type="password" maxLength={ 20 } placeholder="비밀번호를 입력해주세요." />
+            <label>
+              <p>비밀번호</p>
+              <input ref={pw_ref} type="password" maxLength={ 20 } placeholder="비밀번호를 입력해주세요." />
+            </label>
           </Input>
           <Input>
-            <p>비밀번호 확인</p>
-            <input type="password" maxLength={ 20 } placeholder="비밀번호를 다시 입력해주세요." />
+            <label>
+              <p>비밀번호 확인</p>
+              <input ref={confirm_ref} type="password" maxLength={ 20 } placeholder="비밀번호를 다시 입력해주세요." />
+            </label>
           </Input>
           <div>
-            <Btn onClick = {() => {
-              alert("회원가입에 성공하셨습니다.")
-              navigate("/")
-            }}>가입하기</Btn>
+            <Btn onClick = {signupFB}>가입하기</Btn>
             <Btn onClick = {() => {
               alert("회원가입에 실패하셨습니다.")
               navigate("/")

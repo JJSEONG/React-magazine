@@ -1,9 +1,35 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
+import { auth, db } from "../shared/firebase"
+import { signInWithEmailAndPassword } from "firebase/auth"
+import { getDocs, where, query, collection } from "firebase/firestore"
 
 const Login = () => {
   const navigate = useNavigate();
+
+  const id_ref = React.useRef(null);
+  const pw_ref = React.useRef(null);
+
+  const loginFB = async (e) => {
+    e.preventDefault();
+    console.log(id_ref.current.value, pw_ref.current.value);
+    const user = await signInWithEmailAndPassword(
+      auth,
+      id_ref.current.value,
+      pw_ref.current.value
+    );
+
+    console.log(user);
+
+    const user_docs = await getDocs(
+      query(collection(db, "users"), where("user_id", "==", user.user.email))
+    );
+
+      user_docs.forEach((u) => {
+        console.log(u.data());
+      })
+  } 
 
   return (
     <Wrap>
@@ -12,17 +38,14 @@ const Login = () => {
         <form style={{width: "50%"}}>
           <Input>
             <p>아이디</p>
-            <input type="text" maxLength={ 30 } placeholder="이메일 형식 아이디를 입력해주세요." />
+            <input ref={id_ref} type="text" maxLength={ 30 } placeholder="이메일 형식 아이디를 입력해주세요." />
           </Input>
           <Input>
             <p>비밀번호</p>
-            <input type="password" maxLength={ 20 } placeholder="비밀번호를 입력해주세요." />
+            <input ref={pw_ref} type="password" maxLength={ 20 } placeholder="비밀번호를 입력해주세요." />
           </Input>
           <div>
-            <Btn onClick = {() => {
-              alert("회원가입에 성공하셨습니다.")
-              navigate("/")
-            }}>로그인하기</Btn>
+            <Btn onClick = {loginFB}>로그인하기</Btn>
             <Btn onClick = {() => {
               alert("회원가입에 실패하셨습니다.")
               navigate("/")

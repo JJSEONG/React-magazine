@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserPlus, faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
 
-const Header = () => {
+const Header = ({ isLogin }) => {
   const navigate = useNavigate();
   return (
     <Navbar>
@@ -13,14 +13,36 @@ const Header = () => {
           navigate("/")
         }}>JS Book</Logo>
         <div style={{ marginRight : "10px"}}>
-          <Btn onClick = {() => { navigate("/signup")}}>
-            <FontAwesomeIcon icon={ faUserPlus } />
-            <span>회원가입</span>
-          </Btn>
-          <Btn onClick = {() => { navigate("/login")}}>
-            <FontAwesomeIcon icon={ faArrowRightToBracket } />
-            <span>로그인</span>
-          </Btn>
+          {
+            isLogin ? 
+            (
+              <Btn onClick = {() => { navigate("/signup")}}>
+                <FontAwesomeIcon icon={ faUserPlus } />
+                <span>MyPage</span>
+              </Btn>
+            ) :
+            (
+              <Btn onClick = {() => { navigate("/signup")}}>
+                <FontAwesomeIcon icon={ faUserPlus } />
+                <span>회원가입</span>
+              </Btn>
+            )
+          }
+          {
+            isLogin ?
+            (
+              <Btn onClick = {() => { navigate("/login")}}>
+                <FontAwesomeIcon icon={ faArrowRightToBracket } />
+                <span>로그아웃</span>
+              </Btn>
+            ) :
+            (
+              <Btn onClick = {() => { navigate("/login")}}>
+                <FontAwesomeIcon icon={ faArrowRightToBracket } />
+                <span>로그인</span>
+              </Btn>
+            )
+          }
         </div>
       </NavWrap>
     </Navbar>
