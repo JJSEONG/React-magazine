@@ -5,8 +5,18 @@ import { auth, db } from "../shared/firebase"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { getDocs, where, query, collection } from "firebase/firestore"
 
-const Login = () => {
+const Login = ({ isLogin }) => {
+  
   const navigate = useNavigate();
+
+  console.log(isLogin)
+
+  React.useEffect(() => {
+    if(isLogin) {
+      window.alert("이미 로그인 되어 있습니다.")
+      navigate("/")
+    }
+  }, [])
 
   const id_ref = React.useRef(null);
   const pw_ref = React.useRef(null);
@@ -19,6 +29,9 @@ const Login = () => {
       id_ref.current.value,
       pw_ref.current.value
     );
+
+    window.alert("로그인 완료!")
+    navigate("/")
 
     console.log(user);
 

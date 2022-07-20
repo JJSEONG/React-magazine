@@ -2,9 +2,13 @@ import React from 'react'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserPlus, faArrowRightToBracket } from '@fortawesome/free-solid-svg-icons'
+import { faUser, faUserPlus, faLock, faLockOpen, } from '@fortawesome/free-solid-svg-icons'
+import { auth, db } from "../shared/firebase";
+import { signOut } from "firebase/auth";
+
 
 const Header = ({ isLogin }) => {
+  console.log(isLogin)
   const navigate = useNavigate();
   return (
     <Navbar>
@@ -16,8 +20,8 @@ const Header = ({ isLogin }) => {
           {
             isLogin ? 
             (
-              <Btn onClick = {() => { navigate("/signup")}}>
-                <FontAwesomeIcon icon={ faUserPlus } />
+              <Btn onClick = {() => { alert("Mypage 미구현")}}>
+                <FontAwesomeIcon icon={ faUser } />
                 <span>MyPage</span>
               </Btn>
             ) :
@@ -31,14 +35,17 @@ const Header = ({ isLogin }) => {
           {
             isLogin ?
             (
-              <Btn onClick = {() => { navigate("/login")}}>
-                <FontAwesomeIcon icon={ faArrowRightToBracket } />
+              <Btn onClick = {() => {
+                signOut(auth);
+                navigate("/")
+              }}>
+                <FontAwesomeIcon icon={ faLockOpen } />
                 <span>로그아웃</span>
               </Btn>
             ) :
             (
               <Btn onClick = {() => { navigate("/login")}}>
-                <FontAwesomeIcon icon={ faArrowRightToBracket } />
+                <FontAwesomeIcon icon={ faLock } />
                 <span>로그인</span>
               </Btn>
             )
@@ -92,6 +99,7 @@ const Btn = styled.button`
   border-radius: 10px;
   outline: none;
   cursor: pointer;
+  transition: 0.5s;
   span {
     margin-left: 6px;
   }

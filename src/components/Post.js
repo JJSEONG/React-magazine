@@ -47,7 +47,7 @@ const Post = () => {
 const PostWrap = styled.div`
   width: 70%;
   margin: 20px auto ;
-  border: 4px solid #B6B6FA;
+  border: 2px solid #B6B6FA;
   border-radius: 10px;
   box-sizing: border-box;
   overflow: hidden;
@@ -61,7 +61,7 @@ const Header = styled.div`
   justify-content: space-between;
   align-items: center;
   background-color: #EFEDFF;
-  border-bottom: 4px solid #B6B6FA;
+  border-bottom: 2px solid #B6B6FA;
   box-sizing: border-box;
 `
 
@@ -135,7 +135,7 @@ const Like = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 4px solid #B6B6FA;
+  border-top: 2px solid #B6B6FA;
   box-sizing: border-box;
 `
 
@@ -153,6 +153,7 @@ const LikeBtn = styled.div`
   color: #888;
   margin-right: 40px;
   cursor: pointer;
+  transition: 0.5s;
   &:hover {
     color: hotpink;
     filter: drop-shadow(0 0 6px pink);
