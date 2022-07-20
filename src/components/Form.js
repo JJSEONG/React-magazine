@@ -1,59 +1,135 @@
 import React from 'react'
 import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faXmark, faHeart, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
+import { db, storage } from '../shared/firebase'
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { collection, addDoc } from 'firebase/firestore';
+import { useDispatch, useSelector } from 'react-redux'
+import { createPost } from '../redux/modules/magazin'
 
 const Form = () => {
+
+  const data = useSelector((state) => state.magazin.user)
+  console.log(data)
+
   const navigate = useNavigate();
+
+  const file_link_ref = React.useRef(null);
+
+  const [ text, setText ] = React.useState("");
+  const [ imgtext, setImgText ] = React.useState("");
+
+  const temp_img = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpODkDnFxgef41DJWIx-I4aJuAuMMweHw1Ng&usqp=CAU"
+
+  const [ image, setImage] = React.useState(temp_img);
+  const [ layout, setLayout ] = React.useState()
+  const img_ref = React.useRef(null);
+
+  const saveImage = async (e) => {
+    // setUploadImg(event.target.files[0]);
+    console.log(e.target.files);
+    const uploaded_file = await uploadBytes(
+      ref(storage, `post/${e.target.files[0].name}`),
+      e.target.files[0]
+    );
+    
+    console.log(uploaded_file)
+
+    const file_url = await getDownloadURL(uploaded_file.ref);
+
+    console.log(file_url);
+    file_link_ref.current = { url: file_url };
+
+    setImgText(e.target.value.split("\\")[2])
+    setImage(URL.createObjectURL(e.target.files[0]));
+  }
+
+  const dispatch = useDispatch();
+
+  const postsFB = () => {
+    // ===============================================================
+    // e.preventDefault();
+
+    // // console.log(`텍스트 : ${text} URL : ${file_link_ref.current.url} where: ${layout}`);
+
+    // const posts = await addDoc(collection(db, "posts"), {
+    //   write: text,
+    //   image_url: file_link_ref.current.url,
+    //   layout: layout,
+    // });
+
+    // console.log(posts.id)
+    // ===============================================================
+    const date = new Date();
+    const today = date.toLocaleString();
+
+    dispatch(createPost({
+      user_id: data.user_id,
+      nickname: data.nickname,
+      user_img: data.user_img,
+      img: image,
+      write: text,
+      date: today,
+      layout: layout,
+    }))
+
+    window.alert("게시물을 작성하였습니다.")
+    navigate("/")
+  }
+
+  const is_checked = (e) => {
+    if (e.target.checked) {
+      setLayout(e.target.value);
+    }
+  };
+
+  console.log(layout);
+
   return (
     <Wrap>
       <Title>게시글 작성</Title>
       <Filewrap>
-        <FileInput type="text" placeholder="사진을 등록해주세요." readOnly />
+        <FileInput type="text" placeholder="사진을 등록해주세요." value = {imgtext} readOnly /> 
         <FileBtn>
           <Label htmlFor="file">파일 찾기</Label>
         </FileBtn>
-        <input type="file" id="file" style={{ display: "none"}} />
+        <input type="file" id="file" ref={img_ref} style={{display: "none"}} onChange={saveImage} />
       </Filewrap>
       <LayoutWrap>
         <SubTitle>레이아웃 선택</SubTitle>
         <div>
           <Radio>
-            <input type="radio" id="right" name="layout" />
+            <input type="radio" id="right" name="layout" onChange={ is_checked } value="right" />
             <label htmlFor="right">오른쪽 사진</label>
           </Radio>
           <LayoutRight>
-            <p>누구보다 빠르게 남들과는 다르게 색다르게 리듬을 타는 비트위의 나그네</p>
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpODkDnFxgef41DJWIx-I4aJuAuMMweHw1Ng&usqp=CAU" alt="" />
+            <pre>{text}</pre> 
+            <img src={image} alt="" />
           </LayoutRight>
 
           <Radio>
-            <input type="radio" id="left" name="layout" />
+            <input type="radio" id="left" name="layout" onChange={ is_checked } value="left" />
             <label htmlFor="left">왼쪽 사진</label>
           </Radio>
           <LayoutLeft>
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpODkDnFxgef41DJWIx-I4aJuAuMMweHw1Ng&usqp=CAU" alt="" />
-            <p>누구보다 빠르게 남들과는 다르게 색다르게 리듬을 타는 비트위의 나그네</p>
+            <img src={image} alt="" />
+            <pre>{text}</pre>
           </LayoutLeft>
 
           <Radio>
-            <input type="radio" id="center" name="layout" />
+            <input type="radio" id="center" name="layout" onChange={ is_checked } value="center" />
             <label htmlFor="center">가운데 사진</label>
           </Radio>
           <LayoutCenter>
-            <p>누구보다 빠르게 남들과는 다르게 색다르게 리듬을 타는 비트위의 나그네</p>
-            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpODkDnFxgef41DJWIx-I4aJuAuMMweHw1Ng&usqp=CAU" alt="" />
+            <pre>{text}</pre>
+            <img src={image} alt="" />
           </LayoutCenter>
         </div>
         <TextWrap>
           <h2>게시글 내용</h2>
-          <textarea cols="30" rows="10" placeholder='게시글 작성하기'></textarea>
+          <textarea cols="30" rows="10" placeholder='게시글 작성하기' value={ text } onChange={(e) => setText(e.target.value)}></textarea>
           <BtnWrap>
-            <button onClick = {() => {
-              window.alert("게시글을 작성하였습니다.")
-              navigate("/")
-            }}>게시글 작성</button>
+            <button onClick = { postsFB }>게시글 작성</button>
             <button onClick = {() => {
               window.alert("취소를 클릭하셨습니다.")
               navigate("/")
@@ -146,6 +222,7 @@ const Radio = styled.div`
     width: 100px;
     text-align: left;
     transition: 0.2s;
+    cursor: pointer;
   }
   input + label::before {
     content: '';
@@ -208,16 +285,18 @@ const LayoutRight = styled.div`
   box-shadow: 0 0 10px #B6B6FA;
   overflow: hidden;
   img {
-    width: 100%;
+    width: 50%;
     height: 100%;
-    flex-basis: 50%;
+    object-fit: cover;
     border-left: 2px solid #B6B6FA;
   }
-  p {
+  pre {
     width: 50%; 
     height: 100%;
     padding: 20px;
     box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 `
 
@@ -233,16 +312,18 @@ const LayoutLeft = styled.div`
   box-shadow: 0 0 10px #B6B6FA;
   overflow: hidden;
   img {
-    width: 100%;
+    width: 50%;
     height: 100%;
-    flex-basis: 50%;
+    object-fit: cover;
     border-right: 2px solid #B6B6FA;
   }
-  p {
+  pre {
     width: 50%; 
     height: 100%;
     padding: 20px;
     box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 `
 
@@ -261,14 +342,16 @@ const LayoutCenter = styled.div`
   img {
     width: 100%;
     height: 100%;
-    flex-basis: 50%;
-    border-right: 2px solid #B6B6FA;
+    object-fit: cover;
+    border-top: 2px solid #B6B6FA;
   }
-  p {
+  pre {
     width: 100%; 
     height: 100%;
     padding: 20px;
     box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 `
 

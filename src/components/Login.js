@@ -4,10 +4,13 @@ import { useNavigate } from 'react-router-dom'
 import { auth, db } from "../shared/firebase"
 import { signInWithEmailAndPassword } from "firebase/auth"
 import { getDocs, where, query, collection } from "firebase/firestore"
+import { createUser } from '../redux/modules/magazin'
+import { useDispatch } from 'react-redux'
 
 const Login = ({ isLogin }) => {
   
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   console.log(isLogin)
 
@@ -30,18 +33,26 @@ const Login = ({ isLogin }) => {
       pw_ref.current.value
     );
 
-    window.alert("로그인 완료!")
-    navigate("/")
+    // window.alert("로그인 완료!")
+    // navigate("/")
 
     console.log(user);
 
     const user_docs = await getDocs(
       query(collection(db, "users"), where("user_id", "==", user.user.email))
     );
+    console.log(user_docs.id)
 
-      user_docs.forEach((u) => {
-        console.log(u.data());
-      })
+    user_docs.forEach((u) => {
+      console.log(u.data());
+    })
+
+    const [data] = user_docs.docs.map(doc => ({
+      ...doc.data()
+    }));
+    console.log(data)
+
+    dispatch(createUser(data))
   } 
 
   return (

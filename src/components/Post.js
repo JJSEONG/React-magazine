@@ -3,20 +3,22 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark, faHeart, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 
-import Logo from '../logo.png'
 
-const Post = () => {
+const Post = ({ data }) => {
+  
+  console.log(data)
+
   return (
     <PostWrap>
       <Header>
         <User>
           <ImgWrap>
-            <img src={ Logo } alt="" />
+            <img src={data.user_img} alt="" />
           </ImgWrap>
-          <div>이름</div>
+          <div>{data.nickname}</div>
         </User>
         <IconBox>
-          <div>2022-07-15 09:20:07</div>
+          <div>{data.date}</div>
           <div style={{margin: "0 20px"}}>
             <button>
               <FontAwesomeIcon icon={ faPenToSquare } />
@@ -27,10 +29,30 @@ const Post = () => {
           </div>
         </IconBox>
       </Header>
-      <Desc>
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRpODkDnFxgef41DJWIx-I4aJuAuMMweHw1Ng&usqp=CAU" alt="" />
-        <p>누구보다 빠르게 남들과는 다르게 색다르게 리듬을 타는 비트위의 나그네</p>
-      </Desc>
+      {
+        (data.layout === "left") ?
+          (
+            <DescLeft>
+              <img src={data.img} alt="" />
+              <pre>{data.write}</pre>
+            </DescLeft>
+          )
+          : (data.layout === "right") ?
+          (
+            <DescRight>
+              <pre>{data.write}</pre>
+              <img src={data.img} alt="" />
+            </DescRight>
+          )
+          :
+          (
+            <DescCenter>
+              <pre>{data.write}</pre>
+              <img src={data.img} alt="" />
+            </DescCenter>
+          )
+      }
+
       <Like>
         <LikeInfo>
           <div>좋아요 1개</div>
@@ -45,8 +67,8 @@ const Post = () => {
 }
 
 const PostWrap = styled.div`
-  width: 70%;
-  margin: 20px auto ;
+  width: 60%;
+  margin: 120px auto;
   border: 2px solid #B6B6FA;
   border-radius: 10px;
   box-sizing: border-box;
@@ -110,22 +132,76 @@ const IconBox = styled.div`
   }
 `
 
-const Desc = styled.div`
+const DescRight = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 0 10px #B6B6FA;
+  overflow: hidden;
+  img {
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+    border-left: 2px solid #B6B6FA;
+  }
+  pre {
+    width: 50%; 
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+`
+
+const DescLeft = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 10px #B6B6FA;
+  overflow: hidden;
+  img {
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+    border-right: 2px solid #B6B6FA;
+  }
+  pre {
+    width: 50%; 
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+`
+
+const DescCenter = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 0 10px #B6B6FA;
+  overflow: hidden;
   img {
     width: 100%;
     height: 100%;
-    flex-basis: 50%;
+    object-fit: cover;
+    border-top: 2px solid #B6B6FA;
   }
-  p {
-    width: 60%;
+  pre {
+    width: 100%; 
     height: 100%;
-    padding: 30px;
+    padding: 20px;
     box-sizing: border-box;
+    white-space: pre-wrap;
+    word-break: break-all;
   }
 `
 

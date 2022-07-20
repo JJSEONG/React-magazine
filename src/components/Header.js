@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useNavigate } from 'react-router-dom'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUser, faUserPlus, faLock, faLockOpen, } from '@fortawesome/free-solid-svg-icons'
-import { auth, db } from "../shared/firebase";
+import { auth } from "../shared/firebase";
 import { signOut } from "firebase/auth";
 
 
@@ -68,6 +68,7 @@ const Navbar = styled.header`
   align-items: center;
   background-color: #EFEDFF;
   border-bottom: 2px solid #B6B6FA;
+  z-index: 5000;
 `
 
 const NavWrap = styled.div`

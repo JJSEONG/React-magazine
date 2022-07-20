@@ -34,12 +34,12 @@ function App() {
       <Header isLogin={ is_login }/>
       <Routes>
         <Route path="/" exact element = { <Main isLogin={ is_login }/> } />
-        <Route path="/signup" element = { <SignUp /> } />
+        <Route path="/signup" element = { <SignUp isLogin={ is_login } /> } />
         <Route path="/login" element = { <Login isLogin={ is_login } /> } />
         <Route path="/form" element = { <Form /> } />
       </Routes>
     </div>
-  );
+  )
 }
 
 export default App;

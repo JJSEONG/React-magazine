@@ -4,15 +4,24 @@ import Post from './Post'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPencil } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const Main = ({ isLogin }) => {
+
+  const data = useSelector((state) => state.magazin.post)
+  console.log(data)
 
   const navigate = useNavigate();
   return (
     <PostWrap>
-      <Post />
-      <Post />
-      <Post />
+      {
+        data.map((v, i) => {
+          return (
+            <Post data={ v } key={ i } />
+          )
+        })
+      }
+
       { isLogin ?
         (<AddBtn onClick={() => {
           navigate("/form")

@@ -2,30 +2,38 @@ import React from 'react';
 import styled from 'styled-components';
 import { useNavigate } from 'react-router-dom';
 import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
-import { auth, db } from "../shared/firebase";
+import { auth, db, storage } from "../shared/firebase";
 import { collection, addDoc } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { signOut } from "firebase/auth";
 
-const SignUp = () => {
+const SignUp = ( { isLogin }) => {
   const navigate = useNavigate();
 
   const id_ref = React.useRef(null);
   const name_ref = React.useRef(null);
   const pw_ref = React.useRef(null);
   const confirm_ref = React.useRef(null);
+  const file_link_ref = React.useRef(null);
+
+  React.useEffect(() => {
+    if(isLogin) {
+      window.alert("이미 로그인 되어 있습니다.")
+      navigate("/")
+    }
+  }, [])
 
   const signupFB = async (e) => {
 
-    e.preventDefault()
+    e.preventDefault();
 
     // if(id_ref.current.value === "") {
     //   window.alert("값이 비었어!")  
     // }
-
     const user = await createUserWithEmailAndPassword(
       auth,
       id_ref.current.value,
       pw_ref.current.value,
-      confirm_ref.current.value
     );
 
     console.log(user);
@@ -33,15 +41,37 @@ const SignUp = () => {
     const user_data = await addDoc(collection(db, "users"), {
       user_id: id_ref.current.value,
       name: name_ref.current.value,
+      image_url: file_link_ref.current.url,
     });
     console.log(user_data.id);
+
+    window.alert(`안녕하세요.${name_ref.current.value} 님!\n회원가입에 성공하였습니다.`)
+    signOut(auth);
+    navigate('/')
   }
+
+  const uploadFB = async (e) => {
+    console.log(e.target.files);
+    const uploaded_file = await uploadBytes(
+      ref(storage, `images/${e.target.files[0].name}`),
+      e.target.files[0]
+    );
+
+    console.log(uploaded_file);
+
+    const file_url = await getDownloadURL(uploaded_file.ref);
+
+    console.log(file_url)
+    file_link_ref.current = { url: file_url };
+  };
 
   return (
     <Wrap>
       <ConWrap>
         <Title>Sign-Up</Title>
-        <form style={{width: "50%"}}>
+        <form
+        onSubmit = {signupFB}
+        style={{width: "50%"}}>
           <Input>
             <label>
               <p>아이디</p>
@@ -51,7 +81,7 @@ const SignUp = () => {
           <Input>
             <label>
               <p>닉네임</p>
-              <input ref={name_ref} type="text" maxLength={ 8 } placeholder="닉네임을 입력해주세요." /> 
+              <input ref={name_ref} type="text" maxLength={ 16 } placeholder="닉네임을 입력해주세요." /> 
             </label>
           </Input>
           <Input>
@@ -66,8 +96,14 @@ const SignUp = () => {
               <input ref={confirm_ref} type="password" maxLength={ 20 } placeholder="비밀번호를 다시 입력해주세요." />
             </label>
           </Input>
+          <Input>
+            <label>
+              <p>이미지 등록</p>
+              <input type="file" onChange={uploadFB} />
+            </label>
+          </Input>
           <div>
-            <Btn onClick = {signupFB}>가입하기</Btn>
+            <Btn>가입하기</Btn>
             <Btn onClick = {() => {
               alert("회원가입에 실패하셨습니다.")
               navigate("/")
