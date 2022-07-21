@@ -8,7 +8,7 @@ import { signOut } from "firebase/auth";
 
 
 const Header = ({ isLogin }) => {
-  console.log(isLogin)
+  // console.log(isLogin)
   const navigate = useNavigate();
   return (
     <Navbar>

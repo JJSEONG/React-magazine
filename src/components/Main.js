@@ -8,16 +8,19 @@ import { useSelector } from 'react-redux'
 
 const Main = ({ isLogin }) => {
 
-  const data = useSelector((state) => state.magazin.post)
-  console.log(data)
+  const data = useSelector((state) => state.magazin)
+  // console.log("12: ", data)
+
+  const id = data.user
+  // console.log("id", id)
 
   const navigate = useNavigate();
   return (
     <PostWrap>
       {
-        data.map((v, i) => {
+        data.post.map((v, i) => {
           return (
-            <Post data={ v } key={ i } />
+            <Post data={ v } key={ i } id={ id } />
           )
         })
       }

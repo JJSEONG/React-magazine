@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { auth, db } from "./shared/firebase";
 import { signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
-import { collection, addDoc } from "firebase/firestore";
 
 import './App.css';
 import './fonts/fonts.css'
@@ -11,12 +10,15 @@ import SignUp from './components/SignUp';
 import Login from './components/Login';
 import Main from './components/Main';
 import Form from './components/Form'
+import { loadPostFB } from './redux/modules/magazin';
+import { useDispatch } from 'react-redux';
 
 function App() {
 
   const [is_login, setIsLogin] = React.useState(false);
+  const dispatch = useDispatch();
 
-  console.log(auth.currentUser);
+  // console.log(auth.currentUser);
 
   const loginCheck = async (user) => {
     if(user) {
@@ -27,6 +29,7 @@ function App() {
   }
   React.useEffect(() => {
     onAuthStateChanged(auth, loginCheck)
+    dispatch(loadPostFB())
   }, []); 
 
   return (

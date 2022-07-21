@@ -27,23 +27,19 @@ const SignUp = ( { isLogin }) => {
 
     e.preventDefault();
 
-    // if(id_ref.current.value === "") {
-    //   window.alert("값이 비었어!")  
-    // }
     const user = await createUserWithEmailAndPassword(
       auth,
       id_ref.current.value,
       pw_ref.current.value,
     );
-
-    console.log(user);
+    // console.log(user);
 
     const user_data = await addDoc(collection(db, "users"), {
       user_id: id_ref.current.value,
       name: name_ref.current.value,
       image_url: file_link_ref.current.url,
     });
-    console.log(user_data.id);
+    // console.log(user_data.id);
 
     window.alert(`안녕하세요.${name_ref.current.value} 님!\n회원가입에 성공하였습니다.`)
     signOut(auth);
@@ -51,17 +47,17 @@ const SignUp = ( { isLogin }) => {
   }
 
   const uploadFB = async (e) => {
-    console.log(e.target.files);
+    // console.log(e.target.files);
     const uploaded_file = await uploadBytes(
       ref(storage, `images/${e.target.files[0].name}`),
       e.target.files[0]
     );
 
-    console.log(uploaded_file);
+    // console.log(uploaded_file);
 
     const file_url = await getDownloadURL(uploaded_file.ref);
 
-    console.log(file_url)
+    // console.log(file_url)
     file_link_ref.current = { url: file_url };
   };
 

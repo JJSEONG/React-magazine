@@ -5,12 +5,15 @@ import { db, storage } from '../shared/firebase'
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
 import { collection, addDoc } from 'firebase/firestore';
 import { useDispatch, useSelector } from 'react-redux'
-import { createPost } from '../redux/modules/magazin'
+import { createPost, createPostFB } from '../redux/modules/magazin'
 
 const Form = () => {
 
-  const data = useSelector((state) => state.magazin.user)
-  console.log(data)
+  const user_data = useSelector((state) => state.magazin.user)
+  // console.log("뭐가다르지? ",user_data)
+  const data = useSelector((state) => state.magazin)
+  // console.log("정말 알수없다: ", data)
+
 
   const navigate = useNavigate();
 
@@ -27,51 +30,40 @@ const Form = () => {
 
   const saveImage = async (e) => {
     // setUploadImg(event.target.files[0]);
-    console.log(e.target.files);
+    // console.log(e.target.files);
     const uploaded_file = await uploadBytes(
       ref(storage, `post/${e.target.files[0].name}`),
       e.target.files[0]
     );
     
-    console.log(uploaded_file)
+    // console.log(uploaded_file)
 
     const file_url = await getDownloadURL(uploaded_file.ref);
 
-    console.log(file_url);
+    // console.log(file_url);
     file_link_ref.current = { url: file_url };
 
     setImgText(e.target.value.split("\\")[2])
-    setImage(URL.createObjectURL(e.target.files[0]));
+    setImage(file_url);
+    // console.log("file_url",file_url);
   }
 
   const dispatch = useDispatch();
 
   const postsFB = () => {
-    // ===============================================================
-    // e.preventDefault();
-
-    // // console.log(`텍스트 : ${text} URL : ${file_link_ref.current.url} where: ${layout}`);
-
-    // const posts = await addDoc(collection(db, "posts"), {
-    //   write: text,
-    //   image_url: file_link_ref.current.url,
-    //   layout: layout,
-    // });
-
-    // console.log(posts.id)
-    // ===============================================================
     const date = new Date();
     const today = date.toLocaleString();
-
-    dispatch(createPost({
-      user_id: data.user_id,
-      nickname: data.nickname,
-      user_img: data.user_img,
+    const temp_post = {
+      user_id: data.user.user_id,
+      nickname: data.user.name,
+      user_img: data.user.image_url,
       img: image,
       write: text,
       date: today,
       layout: layout,
-    }))
+    }
+    // console.log("TEMP :",temp_post)
+    dispatch(createPostFB(temp_post))
 
     window.alert("게시물을 작성하였습니다.")
     navigate("/")
@@ -83,7 +75,7 @@ const Form = () => {
     }
   };
 
-  console.log(layout);
+  // console.log(layout);
 
   return (
     <Wrap>

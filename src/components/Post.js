@@ -4,9 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faXmark, faHeart, faPenToSquare } from '@fortawesome/free-solid-svg-icons'
 
 
-const Post = ({ data }) => {
+const Post = ({ data, id }) => {
   
-  console.log(data)
+  // console.log("data when draw",data)
+  // console.log("id값 확인", id)
 
   return (
     <PostWrap>
@@ -15,7 +16,7 @@ const Post = ({ data }) => {
           <ImgWrap>
             <img src={data.user_img} alt="" />
           </ImgWrap>
-          <div>{data.nickname}</div>
+          <div style={{padding: "10px"}}>{data.nickname}</div>
         </User>
         <IconBox>
           <div>{data.date}</div>
@@ -88,10 +89,10 @@ const Header = styled.div`
 `
 
 const User = styled.div`
-  width: 14%;
+  width: 20%;
   height: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   margin-left: 30px;
 `
@@ -103,11 +104,12 @@ const ImgWrap = styled.div`
   border: 2px solid #B6B6FA;
   border-radius: 50%;
   overflow: hidden;
-  margin-right: 6px;
   box-sizing: border-box;
   img {
     width: 100%;
     height: 100%;
+    flex-basis: 100%;
+    object-fit: cover;
   }
 `
 

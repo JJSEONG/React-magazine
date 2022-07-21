@@ -6,13 +6,18 @@ import { signInWithEmailAndPassword } from "firebase/auth"
 import { getDocs, where, query, collection } from "firebase/firestore"
 import { createUser } from '../redux/modules/magazin'
 import { useDispatch } from 'react-redux'
+import { loadUserFB } from '../redux/modules/magazin'
+import { useSelector } from 'react-redux'
 
 const Login = ({ isLogin }) => {
+
+  const data = useSelector((state) => state.magazin)
+  // console.log("12: ", data)
   
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  console.log(isLogin)
+  // console.log(isLogin)
 
   React.useEffect(() => {
     if(isLogin) {
@@ -26,33 +31,36 @@ const Login = ({ isLogin }) => {
 
   const loginFB = async (e) => {
     e.preventDefault();
-    console.log(id_ref.current.value, pw_ref.current.value);
+    // console.log(id_ref.current.value, pw_ref.current.value);
     const user = await signInWithEmailAndPassword(
       auth,
       id_ref.current.value,
       pw_ref.current.value
     );
 
-    // window.alert("로그인 완료!")
-    // navigate("/")
+    window.alert("로그인 완료!")
+    navigate("/")
 
-    console.log(user);
+    // console.log(user);
 
     const user_docs = await getDocs(
       query(collection(db, "users"), where("user_id", "==", user.user.email))
     );
-    console.log(user_docs.id)
+    // console.log(user_docs.id)
 
     user_docs.forEach((u) => {
-      console.log(u.data());
+      // console.log(u.data());
     })
 
     const [data] = user_docs.docs.map(doc => ({
       ...doc.data()
     }));
-    console.log(data)
 
+    // console.log("데이터 : ",data)
     dispatch(createUser(data))
+    // dispatch(loadUserFB(id_ref.current.value))
+
+    // console.log(data)
   } 
 
   return (
@@ -62,11 +70,11 @@ const Login = ({ isLogin }) => {
         <form style={{width: "50%"}}>
           <Input>
             <p>아이디</p>
-            <input ref={id_ref} type="text" maxLength={ 30 } placeholder="이메일 형식 아이디를 입력해주세요." />
+            <input ref={id_ref} type="text" maxLength={ 30 } required placeholder="이메일 형식 아이디를 입력해주세요." />
           </Input>
           <Input>
             <p>비밀번호</p>
-            <input ref={pw_ref} type="password" maxLength={ 20 } placeholder="비밀번호를 입력해주세요." />
+            <input ref={pw_ref} type="password" maxLength={ 20 } required placeholder="비밀번호를 입력해주세요." />
           </Input>
           <div>
             <Btn onClick = {loginFB}>로그인하기</Btn>
